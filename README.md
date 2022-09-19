@@ -1,0 +1,2 @@
+# SM
+Skaitinių metodų kursas
