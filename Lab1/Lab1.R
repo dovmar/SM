@@ -130,7 +130,7 @@ ggplot(data.frame(x = seq(-3, 3, 0.1)), aes(x)) +
 ####
 
 
-res <- pusiaukirtos(-2,0,func)
+res <- pusiaukirtos(-1,2,func,eps)
 func(res$c[length(res$c)])
 
 
@@ -175,19 +175,5 @@ niutono_lentele(xn)
 
 palyginimas <- c(tail(res$c,1),tail(xn,1),uniroot(func,c(-3,3))$root)
 names(palyginimas) <- c("Pusiaukirtos","Niutono","Uniroot()")
-palyginimas
-
-
-
-library(readr)
-
-
-write_csv(round(niutono_lentele(xn),7),"n.csv")
-
-
-
-write_csv(round(pusiaukirtos_lentele(res),7),"p.csv")
-
-
 palyginimas
 
