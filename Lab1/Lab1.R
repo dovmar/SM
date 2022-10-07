@@ -130,7 +130,7 @@ ggplot(data.frame(x = seq(-3, 3, 0.1)), aes(x)) +
 ####
 
 
-res <- pusiaukirtos(-1,2,func,eps)
+res <- pusiaukirtos(1.1,1.2,func,eps)
 func(res$c[length(res$c)])
 
 
@@ -155,7 +155,7 @@ func(xn[length(xn)])
 
 
 ggplot(data.frame(x = seq(-3, 3, 0.1)), aes(x)) +
-  geom_function(fun = func, colour = "black") +
+  geom_function(fun = func, colour = "black") +0
   geom_hline(yintercept = 0, color = "red") + 
   theme_minimal(base_size = 16) +
   geom_point(data=niutono_lentele(xn)[1:8,],
