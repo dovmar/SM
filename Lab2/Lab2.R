@@ -5,6 +5,8 @@
 ###
 
 
+# Funkciju aprasymas
+
 zeidelio <- function(x0,D,L,U,B,eps) {
   x <- matrix(x0)
   n <- 0
@@ -32,7 +34,6 @@ jungtiniu_gradientu <- function(x0,A,B,eps) {
   x <- matrix(x0)
   z <- A %*% x - B
   p <- z
-  dot <- t(z) %*% z
   r <- A %*% p
   tau <- c((t(z) %*% z) / (t(r) %*% p))
   n <- 0
@@ -72,13 +73,14 @@ jungtiniu_gradientu <- function(x0,A,B,eps) {
 
 
 
-
+## lentele, parodanti artiniu paklaidas pagal iteracijas
 lentele <- function(xn,A,B) {
   
-  norms <- apply(xn,1,function(x) norm(matrix(A %*% x - B,byrow=TRUE)))
+  norms <- apply(xn,1,function(x) norm(matrix(A %*% x - B,byrow=TRUE),type="M"))
   xn <- cbind(0:(nrow(xn)-1),xn,norms)
   return(xn)
 }
+
 
 
 
@@ -115,14 +117,26 @@ D <- D
 
 
 
+# konvergavimo sąlygų patikrinimas
+
+max(abs(eigen(solve(D-L)%*%U)$values))
+
+norm(solve(D-L)%*%U)
+
+
+
+
+
 eps <- 0.0001
 
-x0 <- rep(0,length(B))
+x0 <- rep(0,length(B)) # bet koks pradinis artinys
 
 
 
 
-# Zeidelio
+
+
+# Zeidelio metodas
 
 xn_1 <- zeidelio(x0,D,L,U,B,eps)
 
@@ -138,7 +152,9 @@ round(t(palyginimas),6)
 
 
 
-# Jungtiniu gradientu
+
+
+# Jungtiniu gradientu metodas
 
 
 result <- jungtiniu_gradientu(x0,A,B,eps)
@@ -157,15 +173,20 @@ t(palyginimas)
 
 
 
-# patikriname ar p_n sudaro matricos A atzvilgiu jungtiniu vektoriu sistema
+
+## patikriname ar gauti p_n tikrai sudaro matricos A atzvilgiu jungtiniu vektoriu sistema
 
 for(i in 1:nrow(p_n)) {
  for(j in 1:nrow(p_n)) {
    if(i != j) {
-     print(t(A%*%p_n[i,]) %*% p_n[j,])
+     print(all.equal(matrix(0)
+                            ,t(A%*%p_n[i,]) %*% p_n[j,]))
    }
  } 
 }
+
+
+
 
 
 
@@ -175,7 +196,6 @@ library(Rlinsolve)
 # Artiniu palyginimas
 
 palyginimas <- cbind(matrix(xn_1[nrow(xn_1),]),matrix(xn_2[nrow(xn_2),]),lsolve.jacobi(A,B)$x, lsolve.cg(A,B)$x)
-colnames(palyginimas) <- c("Zeidelio","Jungtinių gradientų","R iteracinis metodas","R variacinis metodas")
+colnames(palyginimas) <- c("Zeidelio","Jungtinių gradientų","R iteracinis metodas lsolve.jacobi","R variacinis metodas lsove.cg")
 t(palyginimas)
-
 
