@@ -86,7 +86,7 @@ lentele <- function(xn,A,B) {
 
 
 D <- matrix(c(0.18, 0.57, 0.38, 0.42,
-              0.57, 0.95, 0.70, 0.44,
+              0.57, 0.95, -2, 0.44,
               0.38, 0.70, 0.37, 0.18,
               0.42, 0.44, 0.18, 0.40),
             ncol=4,nrow=4)
@@ -117,14 +117,6 @@ D <- D
 
 
 
-# konvergavimo sąlygų patikrinimas
-
-max(abs(eigen(solve(D-L)%*%U)$values))
-
-norm(solve(D-L)%*%U)
-
-
-
 
 
 eps <- 0.0001
@@ -138,9 +130,21 @@ x0 <- rep(0,length(B)) # bet koks pradinis artinys
 
 # Zeidelio metodas
 
+
+
+## konvergavimo sąlygų patikrinimas
+
+max(abs(eigen(solve(D-L)%*%U)$values))
+
+norm(solve(D-L)%*%U)
+
+
+
 xn_1 <- zeidelio(x0,D,L,U,B,eps)
 
 round(lentele(xn_1,A,B),5)
+
+#matrix(apply(diff(xn_1),1,function(y) norm(matrix(y),type="M")))
 
 
 
@@ -153,8 +157,14 @@ round(t(palyginimas),6)
 
 
 
-
 # Jungtiniu gradientu metodas
+
+
+
+## konvergavimo sąlygų patikrinimas
+
+
+abs(eigen(A)$values)
 
 
 result <- jungtiniu_gradientu(x0,A,B,eps)
@@ -163,13 +173,14 @@ xn_2 <- result[[1]]
 p_n <- result[[2]]
 
 
-round(lentele(xn_2,A,B),5)
+round(lentele(xn_2,A,B),50)
 
 
 
 palyginimas <- cbind(A %*% matrix(xn_2[nrow(xn_2),]),B)
 colnames(palyginimas) <- c("Gautas B","Norimas B")
 t(palyginimas)
+
 
 
 
@@ -198,4 +209,5 @@ library(Rlinsolve)
 palyginimas <- cbind(matrix(xn_1[nrow(xn_1),]),matrix(xn_2[nrow(xn_2),]),lsolve.jacobi(A,B)$x, lsolve.cg(A,B)$x)
 colnames(palyginimas) <- c("Zeidelio","Jungtinių gradientų","R iteracinis metodas lsolve.jacobi","R variacinis metodas lsove.cg")
 t(palyginimas)
+
 
