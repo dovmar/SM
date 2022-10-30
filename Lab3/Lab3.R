@@ -183,7 +183,7 @@ kubinis_splainas <- function(x,y) {
 
 
 
-a <- -1
+a <- -1.
 b <- 3
 n <- 10
 
@@ -195,39 +195,46 @@ lentele <- interpoliavimo_taskai(funkcija,n,a,b)
 gautas_splainas <- kubinis_splainas(lentele$x,lentele$y)
 
 r_splainas <- splinefun(lentele$x,lentele$y)
-
-
-
-
-
-
-
 library(tidyverse)
 library(latex2exp)
 
 
 rezultatai <- tibble(x = seq(-1, 3, 0.1),
-           `pati funkcija` = funkcija(x),
-           `gautas splainas` = gautas_splainas(x),
-           `r splainas` = r_splainas(x))
+           `Funkcija` = funkcija(x),
+           `Apskaičiuotas splainas` = gautas_splainas(x),
+           `splinefun splainas` = r_splainas(x))
 
-rezultatai <- rezultatai %>% pivot_longer(2:4,names_to = "Tipas",values_to="y")
 
-ggplot(rezultatai, aes(x,y,color=Tipas)) +
-  geom_line() + 
+rezultatai2 <- tibble(x = lentele$x,
+                      `Funkcija` = funkcija(x),
+                      `Apskaičiuotas splainas` = gautas_splainas(x),
+                      `splinefun splainas` = r_splainas(x))
+
+rezultatai <- rezultatai %>% pivot_longer(2:4,names_to = " ",values_to="y")
+rezultatai$` `<- factor(rezultatai$` `,levels=c("Funkcija","Apskaičiuotas splainas","splinefun splainas"))
+
+
+rezultatai2 <- rezultatai2 %>% pivot_longer(2:4,names_to = " ",values_to="y")
+rezultatai2$` `<- factor(rezultatai2$` `,levels=c("Funkcija","Apskaičiuotas splainas","splinefun splainas"))
+
+ggplot(rezultatai, aes(x,y,color=` `)) +
+  geom_line() + geom_point(data = rezultatai2, aes(x,y,color=` `)) +
   labs(title=TeX("e^{-x}(x^3+2)"),
-       subtitle = "Funkcijos grafikas ir kubinių splainų interpoliavimas") +
-  theme_minimal() 
+       subtitle = "Funkcijos ir jos interpoliavimo naudojant kubinius splainaus grafikai") +
+  theme_minimal(base_size = 16) 
   
 
 
 
-
-ggplot(rezultatai, aes(x,y,color=Tipas)) +
-  geom_line() + 
+ggplot(rezultatai, aes(x,y,color=` `)) +
+  geom_line() +  geom_point(data = rezultatai2, aes(x,y,color=` `)) +
   labs(title=TeX("e^{-x}(x^3+2)"),
-       subtitle = "Funkcijos grafikas ir kubinių splainų interpoliavimas") +
-  theme_minimal() + facet_wrap(vars(Tipas)) 
+       subtitle = "Funkcijos ir jos interpoliavimo naudojant kubinius splainaus grafikai") +
+  theme_minimal(base_size = 16) + facet_wrap(vars(` `)) 
+
+efun(lentele$x,lentele$y)
+
+
 
 
 

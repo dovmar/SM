@@ -16,6 +16,7 @@ variaciniu metodais.
 
 ### 3 laboratorinis
 
+TLS sprendimas perkelties metodu.
 Kubinio splaino
 koeficientų radimas,
 kai duota funkcijos
