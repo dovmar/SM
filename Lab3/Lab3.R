@@ -34,8 +34,23 @@ vyraujanti <- function(A) {
 
 
 
+triistrizaine <- function(A) {
+  result <- FALSE
+  
+  result <- all(A[abs(row(A) - col(A)) == 1] != 0) &
+                all(diag(A) != 0)
+
+  return(result)
+}
+
+
+
 
 perkelties <- function(A,B) {
+  
+  if (!triistrizaine(A)) {
+    print("TLS nera triistrizaine")
+  }
   
   if (!vyraujanti(A)) {
     print("TLS isstrizaine nera vyraujanti")
@@ -43,8 +58,6 @@ perkelties <- function(A,B) {
   
   p <- -1 * A[1,2] / A[1,1]
   q <- B[1] / A[1,1]
-  print(A)
-  print(B)
   
   for ( i in 2:(nrow(A)-1) ) {
     p_i <- -1* A[i,1+i] / (A[i,i] + A[i,i-1]*p[i-1])
@@ -85,7 +98,7 @@ B <- matrix(c(2,-2,1,-1),ncol=1)
 x <- perkelties(A,B)
 
 
-## gauto sprendinio patikrinimas
+## gauto sprendinio patikrinimas istatant i lygciu sistema
 palyginimas <- cbind(A %*% matrix(x,ncol=1),B)
 colnames(palyginimas) <- c("Gautas B","Norimas B")
 t(palyginimas)
@@ -122,14 +135,15 @@ interpoliavimo_taskai <- function(func,n,a,b) {
 
 
 kubinis_splainas <- function(x,y) {
+  
+  # 1 dalis konstruojama triistrizaine lygciu sistema
   n <- length(x)-1
   h <- diff(x)
   y_diff <- diff(y)
   B <- numeric(n-1) 
   A <- matrix(nrow=n-1,ncol=n-1)
+
   
-  print(h)
-  print(y_diff)
   for ( i in 1:(n-1) ) {
     
     if (i == 1) {
@@ -146,12 +160,19 @@ kubinis_splainas <- function(x,y) {
     
     b_row <- 6*((y[i+2]-y[i+1])/h[i+1] - (y[i+1]-y[i])/h[i])
     
-    print(i)
     A[i,] <- row
     B[i] <- b_row
   } 
 
+  if (!triistrizaine(A)) {
+    print("TLS nera triistrizaine")
+  }
   
+  if (!vyraujanti(A)) {
+    print("TLS isstrizaine nera vyraujanti")
+  }
+  
+  # 2 dalis grazinamas kubinis splainas
   g <- c(0,perkelties(A,B),0)
   
   G <- g[1:length(g)-1] / 2
@@ -183,7 +204,7 @@ kubinis_splainas <- function(x,y) {
 
 
 
-a <- -1.
+a <- -1
 b <- 3
 n <- 10
 
@@ -191,10 +212,10 @@ lentele <- interpoliavimo_taskai(funkcija,n,a,b)
 
 
 
-
+# analogiskai R splinefun() grazinama funkcija
 gautas_splainas <- kubinis_splainas(lentele$x,lentele$y)
 
-r_splainas <- splinefun(lentele$x,lentele$y)
+r_splainas <- splinefun(lentele$x,lentele$y,method='natural')
 library(tidyverse)
 library(latex2exp)
 
@@ -231,12 +252,4 @@ ggplot(rezultatai, aes(x,y,color=` `)) +
   labs(title=TeX("e^{-x}(x^3+2)"),
        subtitle = "Funkcijos ir jos interpoliavimo naudojant kubinius splainaus grafikai") +
   theme_minimal(base_size = 16) + facet_wrap(vars(` `)) 
-
-efun(lentele$x,lentele$y)
-
-
-
-
-
-
 
