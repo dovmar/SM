@@ -24,7 +24,6 @@ reikšmių lentelė.
 
 ### 4 laboratorinis
 
-Integralo
-apskaičiavimas
-skaitiniu metodu ir
-paklaidos įvertinimas. 
+Paprastosios diferencialinės 
+lygties pradinio uždavinio skaitinis 
+sprendimas.
