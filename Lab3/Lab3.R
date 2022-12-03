@@ -37,8 +37,7 @@ vyraujanti <- function(A) {
 triistrizaine <- function(A) {
   result <- FALSE
   
-  result <- all(A[abs(row(A) - col(A)) == 1] != 0) &
-                all(diag(A) != 0)
+  result <- all(A[abs(row(A) - col(A)) > 1] == 0) 
 
   return(result)
 }
@@ -87,7 +86,7 @@ perkelties <- function(A,B) {
 A <- matrix(c(3, 1, 0, 0,
               -1, 4, 3, 0,
               0, 2, 4, -1,
-              0, 0, 2, -3),
+              0, 0, -7, -3),
             ncol=4,nrow=4,byrow=TRUE)
 
 B <- matrix(c(2,-2,1,-1),ncol=1)
@@ -120,7 +119,7 @@ t(palyginimas)
 
 
 funkcija <- function(x) {
-  exp(-x)*(x^3+2)
+  exp(x)*(x^3+2)
 }
 
 
@@ -220,7 +219,7 @@ library(tidyverse)
 library(latex2exp)
 
 
-rezultatai <- tibble(x = seq(-1, 3, 0.1),
+rezultatai <- tibble(x = seq(-1, 3, 0.01),
            `Funkcija` = funkcija(x),
            `Apskaičiuotas splainas` = gautas_splainas(x),
            `splinefun splainas` = r_splainas(x))
